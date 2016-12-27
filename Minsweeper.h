@@ -14,10 +14,10 @@ using namespace std;
 
 class zone {
 	friend ostream &operator<<(ostream &lhs, const zone &rhs) {
-		if(!(rhs.revealed)) {
-			lhs << "?";
-		} else if(rhs.marked) {
+		if(rhs.marked) {
 			lhs << "b";
+		} else if(!(rhs.revealed)) {
+			lhs << "?";
 		} else if(!(rhs.state)){
 			lhs << rhs.zoneValue;
 		} else {
@@ -59,6 +59,9 @@ class zone {
 				return false;
 			}
 			return true;
+		}
+		void markBomb() {
+			this->marked = true;
 		}
 };
 
@@ -184,8 +187,34 @@ class game {
 			}
 		}
 
+		bool hiddenNeighbors(int r, int c) {
+			if(r-1 >= 0) {
+				if(c+1 < columns) {
+					if(!(board[r-1][c+1].isRevealed())){
+						return true;
+					} else if (!(board[r-1][c-1].isRevealed())) {
+						return true;
+					}
+				}					
+			}
+			if(r+1 < rows) {
+				if(c+1 < columns) {
+					if(!(board[r+1][c+1].isRevealed())) {
+						return true;
+					} else if(!(board[r+1][c-1].isRevealed())){
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
 		void revealZeroes(int c, int r) {
-/*			if(board[c][r].zero()) {
+			//cout << "C: " << c << "R: " << r << endl;
+			//if(!hiddenNeighbors(c, r)) {
+			//	return;
+			//}
+			if(board[c][r].zero()) {
 				if(r-1 >= 0) {
 					uncover(c, r-1);
 					if(c+1 < columns) {
@@ -207,35 +236,44 @@ class game {
 				if(c+1 < columns) {
 					uncover(c+1, r);
 				}	
-				if(c-1 < columns) {
+				if(c-1 >= 0) {
 					uncover(c-1, r);
 				}
-			}*/
+			}
 		}
 
 		void uncover(int c, int r) {
+			if(board[c][r].isRevealed()) {
+				return;
+			}
 			if(!(board[c][r].uncover())) {
 				cout << "YOU HIT A BOMB!" << endl;
 				bombHit = true;
 				cout << *this << endl << endl ;	
+			} else {
+				this->revealZeroes(c, r);
+			
 			}
-			revealZeroes(c, r);
+		}
+
+		void markBomb(int c, int r) {
+			board[c][r].markBomb();
 		}
 
 		void makeMove(char ch, int c, int r) {
 			if(c >= 0 && c < columns && r >= 0 && r < rows) {
 				switch(ch){
 					case 'u' :
-						cout << endl <<"IN HERE1" << endl << endl;
 						uncover(c, r);
-						cout << endl <<"IN HEREi1" << endl << endl;
 						break;
 					case 'U' :
 						uncover(c, r);
 						break;
 					case 'm' :
+						markBomb(c, r);
 						break;
-					case 'M' : 
+					case 'M' :
+						markBomb(c, r);
 						break;
 				}
 				cout << *this << endl << endl;
