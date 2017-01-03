@@ -128,16 +128,14 @@ class game {
 		bool allShownRevealed(){
 			for(int i = 0; i < columns; ++i) {
 				for(int j = 0; j < rows; ++j) {
-					if(!(board[i][j].isRevealed()) || !(board[i][j].isMarked())) {
-						return false;
-					}
-					if(board[i][j].isMarked() && !(board[i][j].isBomb())) {
+					if(!(board[i][j].isRevealed()) && !(board[i][j].isMarked())) {
 						return false;
 					}
 				}
 			}
-			return true;
+//			return true;
 
+			return true;
 		}
 
 		bool endGame() {
@@ -145,7 +143,7 @@ class game {
 				cout << "GAME OVER U SUCK HA HA HA" << endl;
 				return true;
 			}
-			if(bombs_shown == numBombs && allShownRevealed()) {
+			if(allShownRevealed()) {
 				cout << "U WIN GOOD JOB" << endl;
 				return true;
 			}
@@ -258,6 +256,7 @@ class game {
 
 		void markBomb(int c, int r) {
 			board[c][r].markBomb();
+			++bombs_shown;
 		}
 
 		void makeMove(char ch, int c, int r) {

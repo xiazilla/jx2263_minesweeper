@@ -52,10 +52,11 @@ int main() {
 			} else { 
 				cout << endl <<  "Invalid input please try again" << endl << endl;
 			}
-
-		}
-		
-		i = 'n';
+		}		
+		cout << endl << endl << endl << endl << endl << endl;
+		cout << "Hope you had fun!" << endl;
+		cout << "Would you like to play again? (Y/N)" << endl;
+		cin >> i;
 	}
 	cout << "Thank you, come again." << endl;
 	return 0;
